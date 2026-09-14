@@ -152,7 +152,7 @@ export default function MoviePlayer({ movieTitle, channelId, msgId, onBack }: Mo
           onPlaying={() => { setIsBuffering(false); setIsPlaying(true); }}
           onPause={() => setIsPlaying(false)}
           style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-          src={`http://localhost:4000/stream?channelId=${encodeURIComponent(channelId)}&msgId=${msgId}`}
+          src={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'}/stream?channelId=${encodeURIComponent(channelId)}&msgId=${msgId}`}
         >
           Your browser does not support HTML5 video.
         </video>
