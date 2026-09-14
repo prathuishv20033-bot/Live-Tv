@@ -24,6 +24,15 @@ const MY_MOVIES: Movie[] = [
     msgId: 4,
     release_date: "2026",
     vote_average: 8.5
+  },
+  {
+    id: "telegram-movie-7",
+    title: "New Telegram Movie (Msg 7)",
+    poster_path: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&q=80&w=500", // Generic poster
+    channelId: "-1004376570919", 
+    msgId: 7,
+    release_date: "2024",
+    vote_average: 7.0
   }
 ];
 // ---------------------------------------------------------
