@@ -14,16 +14,24 @@ export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+        if (!apiKey) {
+          throw new Error("TMDB API key is missing. Please add VITE_TMDB_API_KEY to your Vercel Environment Variables.");
+        }
         const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`);
+        if (!response.ok) {
+          throw new Error(`TMDB API Error: ${response.status} ${response.statusText}`);
+        }
         const data = await response.json();
         setMovies(data.results || []);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch movies:", error);
+        setErrorMsg(error.message || "Failed to fetch movies from TMDB.");
       } finally {
         setIsLoading(false);
       }
@@ -53,6 +61,11 @@ export default function Movies() {
       {isLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
           <Loader2 className="animate-spin text-primary" size={48} />
+        </div>
+      ) : errorMsg ? (
+        <div style={{ textAlign: 'center', padding: '4rem', color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '0.5rem', border: '1px solid #ef4444' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Failed to load movies</h3>
+          <p>{errorMsg}</p>
         </div>
       ) : (
         <div className="channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
@@ -92,9 +105,9 @@ export default function Movies() {
         </div>
       )}
       
-      {!isLoading && movies.length === 0 && (
+      {!isLoading && !errorMsg && movies.length === 0 && (
         <div style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>
-          Failed to load movies.
+          No trending movies found.
         </div>
       )}
     </div>
