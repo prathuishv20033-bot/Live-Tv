@@ -10,7 +10,7 @@ interface MoviePlayerProps {
   onBack: () => void;
 }
 
-export default function MoviePlayer({ movieId, movieTitle, channelId, msgId, onBack }: MoviePlayerProps) {
+export default function MoviePlayer({ movieTitle, channelId, msgId, onBack }: MoviePlayerProps) {
   const [isBuffering, setIsBuffering] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -22,7 +22,7 @@ export default function MoviePlayer({ movieId, movieTitle, channelId, msgId, onB
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
+  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
