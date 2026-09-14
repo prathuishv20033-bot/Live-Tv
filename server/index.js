@@ -29,6 +29,7 @@ async function initTelegram() {
 initTelegram();
 
 app.get('/stream', async (req, res) => {
+  console.log(`Received request for /stream, Range: ${req.headers.range}`);
   const { channelId, msgId } = req.query;
 
   if (!channelId || !msgId) {
@@ -76,7 +77,7 @@ app.get('/stream', async (req, res) => {
     const skipBytes = start - alignedOffset;
     let isFirstChunk = true;
 
-    for await (let chunk of client.download(document.fileId, { offset: alignedOffset, chunkSize: 512 * 1024 })) {
+    for await (let chunk of client.download(document.fileId, { offset: alignedOffset })) {
       if (res.closed) break;
       
       if (isFirstChunk) {
@@ -92,8 +93,11 @@ app.get('/stream', async (req, res) => {
         res.write(chunk.slice(0, remaining));
         break;
       } else {
-        res.write(chunk);
+        const canWrite = res.write(chunk);
         bytesSent += bytesToProcess;
+        if (!canWrite) {
+          await new Promise(resolve => res.once('drain', resolve));
+        }
       }
     }
     res.end();

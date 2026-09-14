@@ -11,31 +11,72 @@ const INITIAL_CHANNELS: Channel[] = [
     id: 'history-tv-18',
     name: 'History TV 18',
     url: 'https://amg01448-amg01448c16-samsung-in-3495.playouts.now.amagi.tv/ts-ap-s1-n1/playlist/amg01448-samsungindia-historychannelhindi-samsungin/playlist.m3u8',
+    logo: 'https://images.seeklogo.com/logo-png/50/1/history-tv18-logo-png_seeklogo-508443.png',
+    category: 'Entertainment',
+    language: 'Hindi'
   },
   {
     id: 'asianet-movies-hd',
     name: 'Asianet Movies HD',
     url: 'https://da86m1sqpm3o0.cloudfront.net/28072023/smil:asianetmovies1.smil/playlist.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDH2PFnOBRFUx-Pyp4Txhb0MJiV3HtldeBBtgvwbxLXg&s=10',
+    category: 'Movies',
+    language: 'Malayalam'
   },
   {
     id: 'mazhavil-manorama-hd',
     name: 'Mazhavil Manorama HD',
     url: 'https://mmtv-vglivessai.akamaized.net/v1/master/673630b269b766886555eebfddd4f27f3de3ab50/f8a0827f-030f-4a0d-b7e5-338996c09a5b/index.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiZVwFjqH-k_gNWepCf7Eirq8z7nzx04wv6k5AVTHlJA&s=10',
+    category: 'Entertainment',
+    language: 'Malayalam'
   },
   {
     id: 'asianet-hd',
     name: 'Asianet HD',
     url: 'https://raw.githubusercontent.com/amazeyourself/adaptive-streams/refs/heads/main/streams/in/YuppTV/AsianetHD.m3u8',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Asianet_2023_logo.png',
+    category: 'Entertainment',
+    language: 'Malayalam'
   },
   {
     id: 'zoom',
     name: 'Zoom',
     url: 'https://dai.google.com/linear/hls/event/JCAm25qkRXiKcK1AJMlvKQ/master.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkAXTETLw3D9gay6IuBuOpUdciX0RPbgtPyP15Y94JH3p0jo4y7swqCDCd&s=10',
+    category: 'Music',
+    language: 'Hindi'
   },
   {
     id: 'tune-6-music',
     name: 'Tune 6 Music',
     url: 'https://stream.d6-pro.com/tunes6music/live/video.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUxq7MNDfVpvGAB8Ab_KBmzaT7uBKvOXmyQfnOWoM4K1upX7uxwdvN-OI&s=10',
+    category: 'Music',
+    language: 'Malayalam'
+  },
+  {
+    id: 'flo-racing',
+    name: 'FLO Racing',
+    url: 'https://amg02278-amg02278c1-distrotv-us-7534.playouts.now.amagi.tv/playlist/amg02278-flosports-floracing24x7-distrotvus/playlist.m3u8',
+    category: 'Sports',
+    language: 'English'
+  },
+  {
+    id: 'asianet-middle-east',
+    name: 'Asianet Middle East',
+    url: 'https://mumt03.tangotv.in/Dsly5z3HASIANETMIDDLEEAST/index.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBHP7PqLOTcmG0btPT4dc0VShNLq0Yw-vmnWqqYiKDjw&s',
+    category: 'Entertainment',
+    language: 'Malayalam'
+  },
+  {
+    id: 'epic-bharat-digital',
+    name: 'Epic Bharat Digital',
+    url: 'https://cc-p1izg43bk7sj5.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-p1izg43bk7sj5/DIYC/PMSL/IN10/Nazara_IN_B/Nazara_IN_B.m3u8',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCurRP1xC1l7mmTGXSqvcXPLzrKsIoTjNm2OV33jspCQ&s=10',
+    category: 'Entertainment',
+    language: 'Hindi'
   }
 ];
 
@@ -65,13 +106,19 @@ function App() {
               return apiName.includes(searchName) || searchName.includes(apiName);
             });
 
-            if (match && match.website) {
+            if (match && match.logo) {
+              return { ...ch, logo: match.logo };
+            } else if (match && match.website) {
               try {
                 const domain = new URL(match.website).hostname;
-                return { ...ch, logo: `https://logo.clearbit.com/${domain}` };
+                return { ...ch, logo: `https://www.google.com/s2/favicons?domain=${domain}&sz=256` };
               } catch (e) {
                 // Ignore invalid URLs
               }
+            } else {
+              // Try to use Google Favicon with a guessed domain if no website in API
+              const guessedDomain = `${ch.name.toLowerCase().replace(/\s+/g, '')}.com`;
+              return { ...ch, logo: `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=256` };
             }
 
             return ch;
@@ -95,48 +142,44 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="app-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <header className="app-header">
         <div className="logo-section">
-          <Tv size={28} className="logo-icon" />
-          <h1 className="app-title">LiveTV</h1>
+          <img src="/golive_logo.jpg" alt="GoLive India" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
+          <h1 className="app-title">GoLive India</h1>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="desktop-nav">
           <button 
+            className={`nav-button ${activeTab === 'tv' ? 'active' : ''}`}
             onClick={() => { setActiveTab('tv'); setActiveChannel(null); }}
-            style={{ 
-              background: activeTab === 'tv' ? '#3b82f6' : 'transparent', 
-              color: 'white', 
-              border: 'none', 
-              padding: '8px 16px', 
-              borderRadius: '8px', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontWeight: '500'
-            }}
           >
             <Tv size={18} /> Live TV
           </button>
           <button 
+            className={`nav-button ${activeTab === 'movies' ? 'active' : ''}`}
             onClick={() => { setActiveTab('movies'); setActiveChannel(null); }}
-            style={{ 
-              background: activeTab === 'movies' ? '#3b82f6' : 'transparent', 
-              color: 'white', 
-              border: 'none', 
-              padding: '8px 16px', 
-              borderRadius: '8px', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontWeight: '500'
-            }}
           >
-            <Film size={18} /> Movies
+            <Film size={18} /> Movies & Shows
           </button>
         </div>
       </header>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="mobile-nav">
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'tv' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('tv'); setActiveChannel(null); }}
+        >
+          <Tv size={24} />
+          <span>Live TV</span>
+        </button>
+        <button 
+          className={`mobile-nav-btn ${activeTab === 'movies' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('movies'); setActiveChannel(null); }}
+        >
+          <Film size={24} />
+          <span>Movies & Shows</span>
+        </button>
+      </nav>
 
       <main>
         {activeTab === 'tv' ? (
