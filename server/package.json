@@ -1,0 +1,19 @@
+{
+  "name": "livetv-backend",
+  "version": "1.0.0",
+  "description": "Backend torrent streamer",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@mtkruto/node": "^0.217.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "input": "^1.0.1",
+    "teleproto": "^1.229.0",
+    "torrent-stream": "^1.2.0"
+  }
+}

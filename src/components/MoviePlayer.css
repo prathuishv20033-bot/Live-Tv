@@ -1,0 +1,131 @@
+.premium-controls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Let clicks pass through to video unless on buttons */
+}
+
+.premium-controls.show {
+  opacity: 1;
+}
+
+.premium-controls.hide {
+  opacity: 0;
+}
+
+.controls-top-gradient {
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+
+.controls-bottom {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: auto; /* Re-enable pointer events for controls */
+}
+
+/* Progress Bar */
+.progress-container {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.premium-progress-bar {
+  width: 100%;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: height 0.1s ease;
+}
+
+.premium-progress-bar:hover {
+  height: 6px;
+}
+
+.premium-progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e50914;
+  cursor: pointer;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.progress-container:hover .premium-progress-bar::-webkit-slider-thumb {
+  opacity: 1;
+}
+
+.premium-progress-bar::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.premium-progress-bar::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e50914;
+  cursor: pointer;
+  border: none;
+  opacity: 0;
+}
+
+.progress-container:hover .premium-progress-bar::-moz-range-thumb {
+  opacity: 1;
+}
+
+/* Toolbar */
+.controls-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, color 0.2s ease;
+}
+
+.control-btn:hover {
+  transform: scale(1.1);
+  color: #e50914;
+}
+
+.time-display {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  user-select: none;
+}
+
+.time-separator, .time-duration {
+  color: #94a3b8;
+}

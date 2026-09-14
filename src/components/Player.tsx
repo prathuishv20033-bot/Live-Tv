@@ -150,7 +150,6 @@ const Player: React.FC<PlayerProps> = ({ url, channelName, onBack }) => {
           ref={videoRef} 
           className="player-wrapper" 
           style={{ width: '100%', height: '100%', backgroundColor: '#000', cursor: showControls ? 'default' : 'none' }}
-          onClick={togglePlay}
           playsInline
         />
         

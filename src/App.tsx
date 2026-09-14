@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Tv } from 'lucide-react';
+import { Tv, Film } from 'lucide-react';
 import Dashboard, { type Channel } from './components/Dashboard';
 import Player from './components/Player';
+import Movies from './components/Movies';
 import './index.css';
 
 // Initial channels list without logos
@@ -39,6 +40,7 @@ const INITIAL_CHANNELS: Channel[] = [
 ];
 
 function App() {
+  const [activeTab, setActiveTab] = useState<'tv' | 'movies'>('tv');
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
   const [channels, setChannels] = useState<Channel[]>(INITIAL_CHANNELS);
 
@@ -93,25 +95,65 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="app-header">
+      <header className="app-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="logo-section">
           <Tv size={28} className="logo-icon" />
           <h1 className="app-title">LiveTV</h1>
         </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button 
+            onClick={() => { setActiveTab('tv'); setActiveChannel(null); }}
+            style={{ 
+              background: activeTab === 'tv' ? '#3b82f6' : 'transparent', 
+              color: 'white', 
+              border: 'none', 
+              padding: '8px 16px', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontWeight: '500'
+            }}
+          >
+            <Tv size={18} /> Live TV
+          </button>
+          <button 
+            onClick={() => { setActiveTab('movies'); setActiveChannel(null); }}
+            style={{ 
+              background: activeTab === 'movies' ? '#3b82f6' : 'transparent', 
+              color: 'white', 
+              border: 'none', 
+              padding: '8px 16px', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontWeight: '500'
+            }}
+          >
+            <Film size={18} /> Movies
+          </button>
+        </div>
       </header>
 
       <main>
-        {activeChannel ? (
-          <Player 
-            url={activeChannel.url} 
-            channelName={activeChannel.name} 
-            onBack={handleBack} 
-          />
+        {activeTab === 'tv' ? (
+          activeChannel ? (
+            <Player 
+              url={activeChannel.url} 
+              channelName={activeChannel.name} 
+              onBack={handleBack} 
+            />
+          ) : (
+            <Dashboard 
+              channels={channels} 
+              onSelectChannel={handleSelectChannel} 
+            />
+          )
         ) : (
-          <Dashboard 
-            channels={channels} 
-            onSelectChannel={handleSelectChannel} 
-          />
+          <Movies />
         )}
       </main>
     </div>
