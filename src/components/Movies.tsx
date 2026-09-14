@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Film } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Film, Loader2 } from 'lucide-react';
 import MoviePlayer from './MoviePlayer';
 
 export interface Movie {
@@ -8,37 +8,34 @@ export interface Movie {
   poster_path: string | null;
   release_date?: string;
   vote_average?: number;
-  channelId: string;
-  msgId: number;
 }
 
-// ---------------------------------------------------------
-// ADD YOUR CURATED MOVIES HERE
-// ---------------------------------------------------------
-const MY_MOVIES: Movie[] = [
-  {
-    id: "dc-2026-tamil",
-    title: "DC 2026 Tamil",
-    poster_path: "https://m.media-amazon.com/images/M/MV5BMTc0MDYyNmYtZDJkNi00YzllLWJlNTctZDU3NTY1MzRhMWEzXkEyXkFqcGc@._V1_.jpg",
-    channelId: "-1004376570919", 
-    msgId: 4,
-    release_date: "2026",
-    vote_average: 8.5
-  }
-];
-// ---------------------------------------------------------
-
 export default function Movies() {
-  const [movies] = useState<Movie[]>(MY_MOVIES);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+        const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`);
+        const data = await response.json();
+        setMovies(data.results || []);
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMovies();
+  }, []);
 
   if (selectedMovie) {
     return (
       <MoviePlayer 
         movieId={selectedMovie.id.toString()} 
         movieTitle={selectedMovie.title}
-        channelId={selectedMovie.channelId}
-        msgId={selectedMovie.msgId}
         onBack={() => setSelectedMovie(null)} 
       />
     );
@@ -49,11 +46,16 @@ export default function Movies() {
       <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Film className="text-primary" size={24} />
-          Movies
+          Trending Movies
         </h2>
       </div>
 
-      <div className="channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+          <Loader2 className="animate-spin text-primary" size={48} />
+        </div>
+      ) : (
+        <div className="channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
           {movies.map((movie) => (
             <div 
               key={movie.id} 
@@ -64,7 +66,7 @@ export default function Movies() {
               <div className="channel-logo-container" style={{ padding: 0, aspectRatio: '2/3', background: '#1e293b', overflow: 'hidden' }}>
                 {movie.poster_path ? (
                   <img 
-                    src={movie.poster_path} 
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
                     alt={movie.title} 
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -88,10 +90,11 @@ export default function Movies() {
             </div>
           ))}
         </div>
+      )}
       
-      {movies.length === 0 && (
+      {!isLoading && movies.length === 0 && (
         <div style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>
-          No movies added yet. Add them in Movies.tsx!
+          Failed to load movies.
         </div>
       )}
     </div>
